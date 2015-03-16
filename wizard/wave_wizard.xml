@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+        <record id="picking_wave_generator_form" model="ir.ui.view">
+            <field name="name">Picking Wave Generator Form</field>
+            <field name="model">stock.picking.wave.wizard</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="">
+		    <group sring="Configure Options" >
+			<field name="picking_type_id" invisible="1" />
+			<field name="name" invisible="1" />
+			<group>
+			    <field name="availability_policy" />
+			    <field name="max_picks" />
+			    <field name="max_items" />
+			    <field name="max_units" />
+			</group>
+		    </group>
+		    <group>
+			<button name="create_wave" string="Create Wave" type="object" />
+                        <button icon="gtk-cancel" special="cancel"
+                            string="Cancel" colspan="1"/>
+		    </group>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_picking_wave_generator" model="ir.actions.act_window">
+            <field name="name">Picking Wave Generator</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">stock.picking.wave.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+    </data>
+</openerp>
