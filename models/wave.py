@@ -1,5 +1,5 @@
 from openerp.osv import osv, fields
-
+from datetime import datetime
 
 class StockPickingWave(osv.osv):
     _name = 'stock.picking.wave'
@@ -20,7 +20,6 @@ class StockPickingWave(osv.osv):
 	'last_print_date': fields.datetime('Last Printed Date'),
 #	'picks_count': fields.function(_picks_count, method=True, type="integer", store=True, string="# Picks"),
 	'picks': fields.one2many('stock.picking.wave.container', 'wave', 'Picks', readonly=True),
-#	'picks': fields.many2many('stock.picking', 'stock_picking_wave_rel', 'wave_id', 'picking_id', 'Picks', readonly=True, copy=False),
     }
 
 
@@ -49,6 +48,24 @@ class StockPickingWave(osv.osv):
     def serve_this_wave(self, cr, uid, wave, context=None):
 	return True
 
+    def create_wave(self, cr, uid, picking_type_id, picking_ids, context=None):
+	container = 1
+	wave_lines = []
+	for picking_id in picking_ids:
+	    wave_lines.append((0, 0, {'pick': picking_id,
+			'container': container,
+	    }))
+	    container += 1
+
+	vals = {'picking_type_id': picking_type_id,
+		'date': datetime.utcnow(),
+		'picks': wave_lines
+	}
+
+	print vals
+	wave_id = self.create(cr, uid, vals)
+	return True
+
 
 class StockPickingWaveContainer(osv.osv):
     _name = 'stock.picking.wave.container'
@@ -58,5 +75,5 @@ class StockPickingWaveContainer(osv.osv):
 	'last_print_date': fields.related('container', 'last_date_printed', string="Last Date Printed", type="datetime"),
 	'wave': fields.many2one('stock.picking.wave', 'Wave', ondelete='cascade', select=True, require=True),
 	'pick': fields.many2one('stock.picking', 'Pick', ondelete='cascade', select=True, required=True),
-	'pick_state': fields.related('picking', 'state', string="State", type="char"),
+	'pick_state': fields.related('pick', 'state', string="State", type="char"),
     }

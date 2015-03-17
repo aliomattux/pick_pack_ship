@@ -1,7 +1,6 @@
 from openerp.osv import osv, fields
 
 
-
 class StockPickingWaveWizard(osv.osv_memory):
     _name = 'stock.picking.wave.wizard'
     _columns = {
@@ -13,13 +12,14 @@ class StockPickingWaveWizard(osv.osv_memory):
 	'availability_policy': fields.selection([('mixed', 'Mixed (Both Partial and Fully available)'), \
 					('ready', 'Only Fully available picks'), \
 					('partial', 'Only Partially available picks')]
-	, 'Availability Policy'),
+	, 'Availability Policy', required=True),
     }
 
 
     _defaults = {
 	'availability_policy': 'mixed',
     }
+
 
     def default_get(self, cr, uid, fields, context=None):
         if context is None: context = {}
@@ -33,6 +33,8 @@ class StockPickingWaveWizard(osv.osv_memory):
     def create_wave(self, cr, uid, ids, context=None):
 	wizard = self.browse(cr, uid, ids[0])
 	picks = self.find_picks(cr, uid, wizard)
+	print picks
+	return self.pool.get('stock.picking.wave').create_wave(cr, uid, wizard.picking_type_id.id, picks)
 	return True
 
 
@@ -63,9 +65,8 @@ class StockPickingWaveWizard(osv.osv_memory):
 	domain = self.prepare_picking_domain(cr, uid, wizard)
 
 	picking_ids = self.search_parent_pickings(cr, uid, wizard, domain)
-
 	remaining_picks = self.filter_parent_picks(cr, uid, wizard, picking_ids)
-	return True
+	return remaining_picks
 
 
     def filter_parent_picks(self, cr, uid, wizard, picking_ids, context=None):
@@ -93,17 +94,29 @@ class StockPickingWaveWizard(osv.osv_memory):
 	group_sql = "\nGROUP BY picking_id"
 
 	sql = base_query + where_sql + group_sql
-
 	cr.execute(sql)
 	picks = cr.dictfetchall()
 	max_items = wizard.max_items
 	max_units = wizard.max_units
 	current_items = 0
 	current_units = 0
+	todo_picking_ids = []
 	for pick in picks:
+	    if max_units > 0:
+		projected_units = pick['number_units'] + max_units
+		if projected_units > max_units:
+	            continue
+		if projected_units == max_units:
+		    break
+            if max_items > 0:
+                projected_items = pick['count_items'] + max_items
+                if projected_items > max_items:
+                    continue
+                if projected_items == max_items:
+                    break
+
 	    current_items += pick['count_items']
 	    current_units += pick['number_units']
-	    if self.check_items_limit:
-		return
-	    if self.check_units_limit:
-		return
+	    todo_picking_ids.append(pick['picking_id'])
+
+	return todo_picking_ids

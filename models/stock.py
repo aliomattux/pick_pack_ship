@@ -48,6 +48,5 @@ class StockPickingType(osv.osv):
 class StockPicking(osv.osv):
     _inherit = 'stock.picking'
     _columns = {
-	'wave_containers': fields.one2many('stock.picking.wave.container', 'pick', 'Wave Container', readonly=True),
-#	'waves': fields.many2many('stock.picking.wave', 'stock_picking_wave_rel', 'picking_id', 'wave_id', 'Waves', readonly=True, copy=False),
+	'waves': fields.one2many('stock.picking.wave.container', 'pick', string='Wave Container', readonly=True),
     }

@@ -42,6 +42,12 @@
             <field name="search_view_id" ref="stock.view_picking_internal_search"/>
         </record>
 
+        <record model="ir.actions.act_window.view" id="action_o_outgoing_tree_ready_ship">
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="mage2odoo_operations.mage_vpicktree_outgoing"/>
+            <field name="act_window_id" ref="action_outgoing_tree_ready_ship"/>
+        </record>
+
 	<!-- Override entire kanban view to add our changes -->
         <record id="stock.stock_picking_type_kanban" model="ir.ui.view">
             <field name="name">stock.picking.type.kanban</field>
@@ -177,7 +183,6 @@
                 </kanban>
             </field>
         </record>
-
         <record id="view_stock_picking_wave_form" model="ir.ui.view">
             <field name="name">Stock Picking Wave Form</field>
             <field name="model">stock.picking</field>
@@ -186,11 +191,10 @@
                 <page string="Additional Info" position="after">
                     <page string="Picking Waves" >
                         <group string="Waves" >
-                            <field name="wave_containers" widget="one2many_list" nolabel="1" >
+                            <field name="waves" nolabel="1" >
                                 <tree>
 				    <field name="wave" />
 				    <field name="container" />
-				    <field name="last_print_date" />
                                 </tree>
                             </field>
                         </group>
@@ -198,6 +202,5 @@
                 </page>
             </field>
         </record>
-
     </data>
 </openerp>

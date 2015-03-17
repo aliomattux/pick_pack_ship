@@ -8,10 +8,10 @@
     'description': """ 
     """,
     'data': [
+	'wizard/wave_wizard.xml',
 	'data/wave_sequence.xml',
 	'views/wave.xml',
 	'views/stock.xml',
-	'wizard/wave_wizard.xml',
     ],
     'test': [
     ],
