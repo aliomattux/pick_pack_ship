@@ -129,13 +129,13 @@ class StockPickingWaveWizard(osv.osv_memory):
 	todo_picking_ids = []
 	for pick in picks:
 	    if max_units > 0:
-		projected_units = pick['number_units'] + max_units
+		projected_units = pick['number_units'] + current_units
 		if projected_units > max_units:
 	            continue
 		if projected_units == max_units:
 		    break
             if max_items > 0:
-                projected_items = pick['count_items'] + max_items
+                projected_items = pick['count_items'] + current_items
                 if projected_items > max_items:
                     continue
                 if projected_items == max_items:
