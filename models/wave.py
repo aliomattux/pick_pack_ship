@@ -19,7 +19,7 @@ class StockPickingWave(osv.osv):
 	'date': fields.datetime('Created On'),
 	'last_print_date': fields.datetime('Last Printed Date'),
 #	'picks_count': fields.function(_picks_count, method=True, type="integer", store=True, string="# Picks"),
-	'picks': fields.one2many('stock.picking.wave.container', 'wave', 'Picks', readonly=True),
+	'picks': fields.one2many('stock.picking.wave.container', 'wave', 'Orders', readonly=True),
     }
 
 
