@@ -48,5 +48,6 @@ class StockPickingType(osv.osv):
 class StockPicking(osv.osv):
     _inherit = 'stock.picking'
     _columns = {
+	'pick_ahead': fields.boolean('Pick Ahead'),
 	'waves': fields.one2many('stock.picking.wave.container', 'pick', string='Wave Container', readonly=True),
     }

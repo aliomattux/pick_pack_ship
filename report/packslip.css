@@ -1,0 +1,648 @@
+html {
+    overflow:visible;
+    margin: 0;
+    padding:0;
+    height: 100%;
+}
+
+body {
+    overflow:visible;
+    height:100%;
+    margin:0;
+    padding:0;
+}
+
+@page {
+    width:8.5;
+    height:11in;
+    margin: 0;
+    padding:0;
+}
+
+div {
+    margin:0;
+    padding:0;
+}
+
+@font-face {
+    font-family:binfont;
+    src:local('binfont'), 
+        url('/usr/share/fonts/truetype/ttf-dejavu/DejaVuSans-Bold.ttf'),
+        format('truetype');
+}
+
+
+.head {
+    font-family:"binfont", helvetica, verdana sans-serif;
+    vertical-align:top;
+}
+
+.department {
+    font-size: 12px;
+
+}
+
+.date {
+    font-size:.75em;
+}
+
+.twothirds {
+    width:66%;
+}
+.onethird {
+    width:33%;
+}
+.half {
+    width:50%;
+}
+
+.full {
+    width:100%;
+}
+
+.breaker {
+    width: 100%;
+    height: 44px;
+    page-break-after: always
+}
+
+.nobreak {
+    page-break-inside: avoid;
+}
+
+.divtable:first-of-type {
+    height: 10%;
+    
+}
+.divtable {
+    /*overflow:visible;*/
+    /*clear:both;*/
+    position:relative;
+    display:table;
+    height:100%;
+    margin-top:0;
+    margin-bottom:0;
+    width:100%;
+    padding:0;
+}
+
+.headtable {
+    overflow:visible;
+    position:relative;
+    margin-bottom:0;
+    display:table;
+    width:100%;
+    padding:0 5px;
+}
+
+.headtableb {
+    border: double grey 1px;
+    overflow:visible;
+    position:relative;
+    margin-top: 0.4em;
+    margin-bottom:0;
+    display:table;
+    width:97.5%;
+    padding:0 5px;
+    margin-left: 1em;
+}
+
+.headtablec {
+    border: double grey 1px;
+    overflow:visible;
+    position:relative;
+    height:70px;
+    margin-bottom:0;
+    display:table;
+    width:97.5%;
+    padding:0 5px;
+    margin-left: 1em;
+}
+
+.detailtable {
+    border: double grey 2px;
+    border-collapse: collapse;
+    border-spacing: 5px;
+    overflow:visible;
+    height: 355px;
+    position:relative;
+    margin-top: 0.4em;
+    margin-left: 1em;
+    display:table;
+    width:97.5%;
+    cellpadding:0;
+}
+
+
+.detailtable_extended {
+    border: double grey 2px;
+    border-collapse: collapse;
+    border-spacing: 5px;
+    overflow:visible;
+    height: 570px;
+    position:relative;
+    margin-top: 0.4em;
+    margin-left: 1em;
+    display:table;
+    width:97.5%;
+    cellpadding:0;
+}
+
+.detailtableheadertop {
+    border: double grey 2px;
+    border-collapse: collapse;
+    border-spacing: 5px;
+    overflow:visible;
+    position:relative;
+    width: 100.0%;
+    display:table;
+    cellpadding:0;
+
+}
+
+.detailtableheaderbottom {
+    border: double grey 2px;
+    border-collapse: collapse;
+    border-spacing: 5px;
+    overflow:visible;
+    position:relative;
+    width: 97.5%;
+    display:table;
+    cellpadding:0;
+
+}
+
+.detailtableheader {
+    border: double grey 2px;
+    border-collapse: collapse;
+    border-spacing: 5px;
+    overflow:visible;
+    position:relative;
+    margin-top: 0.4em;
+    margin-left: 1em;
+    display:table;
+    width:97.5%;
+    cellpadding:0;
+}
+
+
+.breaktable {
+    page-break-after: always;
+}
+
+
+.whiteonblack {
+    background-color: grey;
+    color: white;
+    font-weight:bold;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+
+.borderright {
+    border-right: 1px solid grey;
+}
+
+
+
+
+
+
+.picker {
+    font-size:.7em;
+}
+
+.divth {
+    display: table-header-group;
+    font-family: "binfont"
+    font-size: 20px;
+    text-align: center;
+}
+
+.divthhead {
+    display: table-header-group;
+    font-family: "binfont"
+    text-align: left;
+}
+
+.divtd {
+    overflow:visible;
+    display:table-cell;
+    margin:0;
+    padding:0 2px;
+}
+
+.divtr {
+    overflow:visible;
+    display:table-row;
+    margin:0;
+    padding:0;
+}
+
+.pickline:first-of-type {
+    top: 0px;
+    padding: 0;
+    margin: 0;
+    
+}
+
+
+.pickline {
+    border:solid #000 1px;
+    border-radius:10px;
+    width: 100%;
+    margin: 0px 4px 0px 12px;
+    padding: 0px 2px 0px 0px;
+    height: 90%;
+}
+
+.detailline {
+    border-left: 1px solid grey;
+    text-align: left;
+    font-size: 11.5px;
+    padding: 5px;
+}
+
+.detaillinecontainer {
+    border-left: 1px solid grey;
+    text-align: center;
+    font-size: 20px;
+    padding: 5px;
+}
+
+.detaillinehead {
+    border-left: 1px solid grey;
+    text-align: left;
+    font-size: 15px;
+    padding: 5px;
+}
+
+.thcell {
+    padding: 4px;
+    vertical-align: bottom;
+}
+
+.skinny {
+    width: 5%;
+}
+
+.fat {
+    width: 15%;
+}
+
+
+.onebytworeprinted {
+    position: relative;
+    right: -70px;
+    top: 0px;
+    overflow:visible;
+    margin:0px 0 0;
+    padding:0;
+    -webkit-transform: rotate(90deg);
+}
+.onebytwo {
+    position: relative;
+    right: -70px;
+    top: 0px;
+    overflow:visible;
+    margin:0px 0 0;
+    padding:0;
+}
+
+.top {
+    float: top;
+}
+
+.smallspacer {
+    height: 2mm;
+    overflow:visible;
+    margin:0;
+    padding:0;
+}
+
+.spacer {
+    height:3mm;
+    overflow:visible;
+    margin:0;
+    padding:0;
+}
+
+/*.blockspacer {*/
+    /*margin-left: 15px;*/
+    /*height:12.2mm;*/
+    /*background-color: black;*/
+    /*overflow:visible;*/
+    /*margin:0;*/
+    /*padding:0;*/
+    /*page-break-after: always;*/
+/*}*/
+
+.bin {
+    font-family:binlabel;
+    font-weight:700;
+    font-size:18px;
+    width:125px;
+}
+
+.sku {
+    font-family:binlabel;
+    font-style:italic;
+    font-size:16px;
+    width:70px;
+}
+
+.quantity {
+    font-weight:700;
+    font-size:20px;
+    width:30px;
+}
+
+.toterow {
+    width:100%;
+}
+
+.totes {
+    display:table-cell;
+    border-radius:10px;
+    position:absolute;
+    top:0;
+    bottom:0;
+    right:0;
+    width:100px;
+    margin:0;
+    padding:0px 2px;
+}
+
+.fulltote {
+    width: 20px;
+    height: 15px;
+    background: black;
+    border-radius: 2px;
+    border: solid black 1px;
+}
+
+.emptytote {
+    border: solid black 1px;
+    width: 20px;
+    height: 15px;
+    background: white;
+    border-radius: 2px;
+}
+
+.totetable {
+    margin-top:0px;
+    border-spacing:3px;
+    display:table;
+    /*border:solid transparent 0;*/
+}
+
+.emptycell {
+    width:100px;
+    margin:0;
+    padding:0;
+}
+
+.checkbox {
+    position:absolute;
+    width:5px;
+    height:5px;
+    border:solid #000 1px;
+    left:5px;
+    bottom:5px;
+    margin:0;
+    padding:0;
+}
+
+.lineno {
+    padding-left:15px;
+}
+
+.smallspacer {
+    height:1px;
+    overflow:visible;
+    margin:0;
+    padding:0;
+}
+
+.tablewrapper:nth-child(odd) .pickline {
+    /*background-image: url('data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7');*/
+    /*background-image: url('/home/ken/p/mako/white_grid_paper-background_pattern.jpg');*/
+    background-image: url('/home/ken/p/mako/lightgray.png');
+    /*background-color: rgb(245,255,255);*/
+    /*background: -o-linear-gradient(#d3d3d3, #fff);*/
+}
+
+.tablewrapper {
+    /*display:inline;*/
+    /*position:relative;*/
+    margin: 0px 0 0px 2px;
+    padding:0;
+    height: 12.1mm;
+    /*height: 45px;*/
+    page-break-before: always;
+}
+
+.tablecell {
+    display:table-cell;
+    position:relative;
+    margin:0;
+    padding:0;
+}
+
+.tablerow {
+    position:relative;
+    display:table-row;
+    width:100%;
+    margin:0;
+    padding:0;
+}
+
+.totenumber {
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.toteid {
+    height: 25px;
+}
+
+.details {
+    height: 14px;
+}
+
+.fulfillment {
+    font-size: 13px;
+    font-style: bold;
+    padding-left: 8px;
+    padding-top: -4px;
+}
+
+.toteofcount {
+    font-size: 12px;
+}
+
+.itemblock {
+    font-size: 12px;
+}
+
+.padleft {
+    padding-left: 15px;
+    width: 99%;
+}
+
+.borderblock:first-of-type {
+    position: relative;
+    top: 43px;
+    border-top: dashed 11px block;
+}
+
+.borderblock {
+    border-left: dashed 2px grey;
+    border-right: dashed 2px grey;
+    border-top: dashed 1px grey;
+    border-bottom: dashed 1px grey;
+    margin-left: 6px;
+}
+
+.itemquantity {
+    width: 10%;
+}
+
+.itemsku {
+    width: 30%;
+}
+
+
+.itemdescription {
+    width: 60%;
+}
+
+.hasgrain {
+    position: absolute;
+    left: 40px;
+    top: 4px;
+    border: solid black 2px;
+    font-family: "binlabel";
+    font-size: 16px;
+
+}
+
+.right {
+    float: right;
+}
+
+.content {
+}
+
+.wrapper {
+    min-height: 100%;
+    /*height: 100%;*/
+    margin-bottom: -40px;
+}
+
+.wrapper: after {
+    content: "";
+    display: block;
+}
+
+.footer_bottom {
+    position: absolute;
+    width: 100%;
+    padding-left: 1em;
+    float: center;
+    vertical-align: bottom;
+    /*overflow: hidden;*/
+}
+
+
+.push {
+    height: 0px;
+}
+    
+.thanks {
+    padding-left: 1em;
+    margin: 0px auto;
+    text-align: center;
+    width: 100%;
+    color: gray;
+    height: 1em;
+}
+
+.pageno {
+    font-size: 20px;
+    border-top: 1px solid black;
+    width: 100%;
+}
+
+.rightside {
+    float: center;
+    font-size: 9px;
+    width: 5%;
+}
+
+.controlnumber {
+    font-family: Verdana;
+    font-size: 20px;
+    margin-left: 33%;
+    margin-top: 33%;
+    width: 100%
+    height: 100%;
+    /*height: 5in;*/
+    page-break-after: always;
+    border-collapse: collapse;
+    /*overflow: visible;*/
+}
+
+.largefont {
+    font-size: 30px;
+    font-family: "binfont";
+}
+
+.middle {
+    margin: 0;
+    padding: 0;
+}
+
+.controlno {
+    float: left;
+}
+
+.nopad {
+    padding: 0;
+}
+.batchinfo {
+    border-collapse: collapse;
+    height: 2.5in;
+}
+.header {
+    padding: 0;
+    margin: 0;
+    height: 2em;
+}
+.bold {
+    font-weight: bold;
+    /*font-size: 18px;*/
+}
+.foo {
+    font-size: 40px;
+}
+
+.reprint {
+    position: relative;
+    left: 7.25in;
+    top: 0.25in;
+    color: #000000;
+    font-size: 50px;
+    z-index: 1;
+    height: 0em;
+    width: 0em;
+    /*-webkit-transform: rotate(-30deg);*/
+    /*transform: rotate(-45deg);
+    *-moz-transform: rotate(-45deg);
+    width: 100%;
+    height: 100%;*/
+}
+.reprint:before {
+    content: "R";
+}

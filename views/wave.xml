@@ -20,7 +20,8 @@
             <field name="arch" type="xml">
                 <form>
                     <header>
-			<button name="button_print_picks" string="Print Wave" type="object" class="oe_highlight" />
+			<button name="button_print_wave" string="Print Wave" type="object" class="oe_highlight" />
+			<button name="button_print_picks" string="Print Picks" type="object" class="oe_highlight" />
 		        <field name="state" widget="statusbar" />
                     </header>
                     <sheet string="Picking Waves">

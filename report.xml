@@ -1,0 +1,14 @@
+<openerp>
+  <data>
+      <report id="report_picking_wave"
+            name="picking.wave"
+            auto="False"
+            model="stock.picking.wave"
+            file="pick_pack_ship/report/wave.mako"
+            string="Pick Wave"
+            parser="pick_pack_ship.report.wave.PickWaveReport"
+            header="False"
+            report_type="webkit"
+        />
+    </data>
+</openerp>

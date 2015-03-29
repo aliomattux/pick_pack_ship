@@ -190,6 +190,9 @@
             <field name="arch" type="xml">
                 <page string="Additional Info" position="after">
                     <page string="Picking Waves" >
+			<group>
+			    <field name="pick_ahead" />
+			</group>
                         <group string="Waves" >
                             <field name="waves" nolabel="1" >
                                 <tree>

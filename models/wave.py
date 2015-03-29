@@ -39,14 +39,44 @@ class StockPickingWave(osv.osv):
     }
 
 
+    def button_print_wave(self, cr, uid, ids, context=None):
+	return self.serve_this_wave(cr, uid, ids)
+
+
     def button_print_picks(self, cr, uid, ids, context=None):
 	wave = self.browse(cr, uid, ids[0])
-	return self.serve_this_wave(cr, uid, wave)
+	picks = wave.picks
+        datas = {'ids' : [pick.id for pick in picks],
+		'model': 'stock.picking',
+		'form': {}
+	}
+        return {
+            'type': 'ir.actions.report.xml',
+            'report_name':'pack.slip',
+            'datas' : datas,
+       }
 
 
+    def serve_this_wave(self, cr, uid, wave_ids, context=None):
+	if not context:
+	    context = {}
 
-    def serve_this_wave(self, cr, uid, wave, context=None):
+        datas = {'ids' : wave_ids}
+        datas['form'] = {}
+        return {
+            'type': 'ir.actions.report.xml',
+            'report_name':'picking.wave',
+            'datas' : datas,
+       }
+
+
+    def create_waves(self, cr, uid, picking_type_id, waves, context=None):
+	print 'waves', waves
+	for k, v in waves.items():
+	    wave = self.create_wave(cr, uid, picking_type_id, v)
+
 	return True
+
 
     def create_wave(self, cr, uid, picking_type_id, picking_ids, context=None):
 	container = 1
@@ -62,7 +92,6 @@ class StockPickingWave(osv.osv):
 		'picks': wave_lines
 	}
 
-	print vals
 	wave_id = self.create(cr, uid, vals)
 	return True
 

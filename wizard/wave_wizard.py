@@ -1,23 +1,24 @@
 from openerp.osv import osv, fields
-
+from datetime import datetime, timedelta
 
 class StockPickingWaveWizard(osv.osv_memory):
     _name = 'stock.picking.wave.wizard'
     _columns = {
+	'preset': fields.many2one('stock.picking.wave.preset', 'Preset'),
 	'name': fields.char('Name'),
+	'number_waves': fields.integer('Number of Waves to Generate'),
+	'specify_items': fields.boolean('Specify Items'),
 	'picking_type_id': fields.many2one('stock.picking.type', 'Warehouse'),
 	'max_picks': fields.integer('Maximum number of picks/containers'),
 	'max_units': fields.integer('Maximum number of units'),
+	'specified_items': fields.many2many('product.product', 'stock_picking_wave_items_rel', 'wizard_id', 'product_id', 'Specified Items'),
 	'max_items': fields.integer('Maximum number of items'),
-	'availability_policy': fields.selection([('mixed', 'Mixed (Both Partial and Fully available)'), \
-					('ready', 'Only Fully available picks'), \
-					('partial', 'Only Partially available picks')]
+	'from_date': fields.datetime('From Order Date'),
+	'to_date': fields.datetime('To Order Date'),
+	'availability_policy': fields.selection([('mixed', 'Mixed (Both Partial and Fully available orders)'), \
+					('ready', 'Only fully comitted orders'), \
+					('partial', 'Only partially available orders')]
 	, 'Availability Policy', required=True),
-    }
-
-
-    _defaults = {
-	'availability_policy': 'mixed',
     }
 
 
@@ -25,30 +26,49 @@ class StockPickingWaveWizard(osv.osv_memory):
         if context is None: context = {}
 	kanban_ids = context.get('active_ids', [])
 	kanban = kanban_ids[0]
-	res = {'picking_type_id': kanban}
+	res = {'picking_type_id': kanban,
+		'availability_policy': 'ready',
+		'number_waves': 1,
+	}
 
 	return res
 
 
-    def create_wave(self, cr, uid, ids, context=None):
+    def wave_wizard_generator(self, cr, uid, ids, context=None):
 	wizard = self.browse(cr, uid, ids[0])
-	picks = self.find_picks(cr, uid, wizard)
-	print picks
-	return self.pool.get('stock.picking.wave').create_wave(cr, uid, wizard.picking_type_id.id, picks)
-	return True
+	waves = self.find_waves(cr, uid, wizard)
+	return self.pool.get('stock.picking.wave').create_waves(cr, uid, wizard.picking_type_id.id, waves)
+
+
+    def find_waves(self, cr, uid, wizard):
+	waves = {}
+	for x in range(wizard.number_waves):
+	    waves[x] = self.find_picks(cr, uid, wizard)
+
+	return waves
 
 
     def prepare_picking_domain(self, cr, uid, wizard, context=None):
-	domain = [('picking_type_id', '=', wizard.picking_type_id.id)]
+	domain = [('picking_type_id', '=', wizard.picking_type_id.id),
+		('printed', '!=', True)
+	]
 
 	policy = wizard.availability_policy
 
 	if policy == 'mixed':
-	    domain.append(('state', 'in', ['assigned', 'partially_available']))
+	    domain.extend(['|',('state', 'in', ['assigned', 'partially_available']), ('pick_ahead', '=', True)])
 	elif policy == 'ready':
-	    domain.append(('state', '=', 'assigned'))
+	    domain.extend(['|',('state', '=', 'assigned'), ('pick_ahead', '=', True)])
 	elif policy == 'partial':
-	    domain.append(('state', '=', 'partially_available'))
+	    domain.extend(['|',('state', '=', 'partially_available'), ('pick_ahead', '=', True)])
+
+	if wizard.from_date:
+	    domain.extend([('sale.date_order', '>', wizard.from_date)])
+
+        if wizard.to_date:
+	    date = datetime.strptime(wizard.to_date, '%Y-%m-%d %H:%M:%S')
+	    to_date = date + timedelta(days=1)	    
+            domain.extend([('sale.date_order', '<', to_date.strftime('%Y-%m-%d %H:%M:%S'))])
 
 	return domain
 
@@ -63,7 +83,6 @@ class StockPickingWaveWizard(osv.osv_memory):
 
     def find_picks(self, cr, uid, wizard):
 	domain = self.prepare_picking_domain(cr, uid, wizard)
-
 	picking_ids = self.search_parent_pickings(cr, uid, wizard, domain)
 	remaining_picks = self.filter_parent_picks(cr, uid, wizard, picking_ids)
 	return remaining_picks
@@ -71,7 +90,7 @@ class StockPickingWaveWizard(osv.osv_memory):
 
     def filter_parent_picks(self, cr, uid, wizard, picking_ids, context=None):
 
-	if wizard.max_units < 1 and wizard.max_items < 1:
+	if wizard.max_units < 1 and wizard.max_items < 1 or not picking_ids:
 	    return picking_ids
 
 	#doing direct sql for performance and because ORM cant do this
@@ -91,6 +110,13 @@ class StockPickingWaveWizard(osv.osv_memory):
 	else:
 	    where_sql = "\nWHERE move.picking_id = %s" % picking_ids[0]
 
+	if wizard.specify_items and wizard.specified_items:
+	    item_ids = [product.id for product in wizard.specified_items]
+	    if len(item_ids) > 1:
+		where_sql += "\nAND move.product_id IN %s" % (tuple(item_ids),)
+	    else:
+		where_sql += "\nAND move.product_id = %s" % item_ids[0]
+		
 	group_sql = "\nGROUP BY picking_id"
 
 	sql = base_query + where_sql + group_sql
@@ -117,6 +143,30 @@ class StockPickingWaveWizard(osv.osv_memory):
 
 	    current_items += pick['count_items']
 	    current_units += pick['number_units']
+
 	    todo_picking_ids.append(pick['picking_id'])
 
+	self.pool.get('stock.picking').write(cr, uid, todo_picking_ids, \
+		{'printed': True, 'printed_date': datetime.utcnow()}
+	)
+
 	return todo_picking_ids
+
+
+class StockPickingWavePreset(osv.osv):
+    _name = 'stock.picking.wave.preset'
+    _columns = {
+        'name': fields.char('Preset Name'),
+	'number_waves': fields.integer('Number of Waves to Generate'),
+        'max_picks': fields.integer('Maximum number of picks/containers'),
+        'max_units': fields.integer('Maximum number of units'),
+	'specified_items': fields.many2many('product.product', 'stock_picking_wave_items_rel', 'wizard_id', 'product_id', 'Specified Items'),
+        'from_date': fields.datetime('From Order Date'),
+        'to_date': fields.datetime('To Order Date'),
+	'specify_items': fields.boolean('Specify Items'),
+        'max_items': fields.integer('Maximum number of items'),
+	'availability_policy': fields.selection([('mixed', 'Mixed (Both Partial and Fully available orders)'), \
+					('ready', 'Only fully comitted orders'), \
+					('partial', 'Only partially available orders')]
+	, 'Availability Policy', required=True),
+    }
