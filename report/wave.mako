@@ -33,7 +33,7 @@
 	    <div class="divtd" style="font-size: 45px;" ></div>
             <div class="divtd head top department" style="width: 20%;">
 		<br>
-		<div>Info 1</div>
+		<div>Date Printed: ${current_date()}</div>
 		<div>Info 2</div>
 		<div>Info 3</div>
             </div>
@@ -50,7 +50,7 @@
 			</div>
 			<div class="divtr">
                             <div class="divtd detailline" style="font-size: 12px;">${wave.name}</div>
-                            <div class="divtd detailline" style="font-size: 12px;">some date</div>
+                            <div class="divtd detailline" style="font-size: 12px;">${get_date_created(wave)}</div>
                         </div>
                     </div>
                 </div>
@@ -71,7 +71,7 @@
 	    <div class="divtd"></div>
             <div class="divtd head top department" style="width: 20%;">
                 <br>
-		<div>Info 1</div>
+		<div>Date Printed: ${current_date()}</div>
 		<div>Info 2</div>
 		<div>Info 3</div>
             </div>
@@ -105,11 +105,12 @@
     <div class="detailtable">
 %endif
             <div class="divth whiteonblack">
-                <div class="divtd thcell" style="font-size: 14px; width: 30%;">Bin</div>
-                <div class="divtd thcell" style="font-size: 14px; width: 13%;">Quantity</div>
+                <div class="divtd thcell" style="font-size: 14px; width: 10%;">Bin</div>
+                <div class="divtd thcell" style="font-size: 14px; width: 8%;">Quantity</div>
 	        <div class="divtd thcell" style="font-size: 14px; width: 15%;">Sku</div>
-                <div class="divtd thcell" style="font-size: 14px; width: 30%">Description</div>
-	        <div class="divtd thcell" style="font-size: 14px; width: 13%;">Container</div>
+                <div class="divtd thcell" style="font-size: 14px; width: 30%">DESC 1</div>
+                <div class="divtd thcell" style="font-size: 14px; width: 25%">DESC 2</div>
+	        <div class="divtd thcell" style="font-size: 14px; width: 10%;">Container</div>
             </div>
 
             <!--for order in page:-->
@@ -119,6 +120,7 @@
                     <div class="divtd detailline qty highlightme">${line['qty_order']}</div>
 		    <div class="divtd detailline"><strong>${line['sku']}</strong></div>
 		    <div class="divtd detailline">${line['description']}</div>
+		    <div class="divtd detailline">${line['description2']}</div>
 		    <div class="divtd detaillinecontainer">${line['container']}</div>
                 </div>
             %endfor

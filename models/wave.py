@@ -46,6 +46,7 @@ class StockPickingWave(osv.osv):
     def button_print_picks(self, cr, uid, ids, context=None):
 	wave = self.browse(cr, uid, ids[0])
 	picks = wave.picks
+	context.update({'wave': wave.id})
         datas = {'ids' : [container.pick.id for container in picks],
 		'model': 'stock.picking',
 		'form': {}

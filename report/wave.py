@@ -11,6 +11,7 @@ BLANK =  {
 	  'location': ' ',
           'sku': ' ',
           'description': ' ',
+          'description2': ' ',
           'special_order': ' ',
 }
 
@@ -19,8 +20,15 @@ class PickWaveReport(report_sxw.rml_parse):
         super(PickWaveReport, self).__init__(cr, uid, name, context=context)
         self.localcontext.update({'paginate_items': self._paginate_items, 
 				  'get_date_created': self._get_date_created,
+				  'current_date': self._current_date,
 				  'mark_printed': self._mark_printed
 	})
+
+    def _current_date(self):
+	date = datetime.utcnow()
+	tz = get_localzone()
+	t = tz.localize(date)
+	return datetime.strftime(date, '%m/%d/%Y')
 
 
     def _get_date_created(self, picking):
@@ -57,6 +65,7 @@ class PickWaveReport(report_sxw.rml_parse):
 		'container': container.container,
 		'location': move.location_id.name or ' ',
 		'description': product.name or '',
+		'description2': product.name or '',
 		'special_order': special_order,
 		'expected_ship_date': expected_ship_date,
 	}
