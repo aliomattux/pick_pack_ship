@@ -7,6 +7,7 @@ class StockPickingWaveWizard(osv.osv_memory):
 	'preset': fields.many2one('stock.picking.wave.preset', 'Preset'),
 	'name': fields.char('Name'),
 	'number_waves': fields.integer('Number of Waves to Generate'),
+	'not_containerized': fields.boolean('Not Containerized'),
 	'specify_items': fields.boolean('Specify Items'),
 	'picking_type_id': fields.many2one('stock.picking.type', 'Warehouse'),
 	'max_picks': fields.integer('Maximum number of picks/containers'),
@@ -34,10 +35,47 @@ class StockPickingWaveWizard(osv.osv_memory):
 	return res
 
 
+    def prepare_wave_vals(self, cr, uid, wizard, context=None):
+	vals = {
+		'not_containerized': wizard.not_containerized,
+	}
+
+	return vals
+
+
+    def onchange_preset(self, cr, uid, ids, preset_id, context=None):
+	if not preset_id:
+	    return {}
+
+	preset = self.pool.get('stock.picking.wave.preset').browse(cr, uid, preset_id)
+	items = []
+	if preset.specified_items:
+	    items = preset.specified_items
+
+	vals = {
+		'number_waves': preset.number_waves,
+		'not_containerized': preset.not_containerized,
+		'specify_items': preset.specify_items,
+		'max_picks': preset.max_picks,
+		'max_units': preset.max_units,
+		'max_items': preset.max_items,
+		'from_date': preset.from_date,
+		'to_date': preset.to_date,
+		'availability_policy': preset.availability_policy,
+		'specified_items': items,
+	}
+
+	return {'value': vals}
+
+
     def wave_wizard_generator(self, cr, uid, ids, context=None):
 	wizard = self.browse(cr, uid, ids[0])
+	wave_vals = self.prepare_wave_vals(cr, uid, wizard)
 	waves = self.find_waves(cr, uid, wizard)
-	return self.pool.get('stock.picking.wave').create_waves(cr, uid, wizard.picking_type_id.id, waves)
+
+	return self.pool.get('stock.picking.wave').create_waves(cr, uid, \
+		wizard.picking_type_id.id, waves, wave_vals
+	)
 
 
     def find_waves(self, cr, uid, wizard):
@@ -91,6 +129,8 @@ class StockPickingWaveWizard(osv.osv_memory):
     def filter_parent_picks(self, cr, uid, wizard, picking_ids, context=None):
 
 	if wizard.max_units < 1 and wizard.max_items < 1 or not picking_ids:
+	    self.write_printed(cr, uid, picking_ids)
+	    print 'picking_ids', picking_ids
 	    return picking_ids
 
 	#doing direct sql for performance and because ORM cant do this
@@ -146,21 +186,27 @@ class StockPickingWaveWizard(osv.osv_memory):
 
 	    todo_picking_ids.append(pick['picking_id'])
 
-	self.pool.get('stock.picking').write(cr, uid, todo_picking_ids, \
-		{'printed': True, 'printed_date': datetime.utcnow()}
-	)
+	self.write_printed(cr, uid, todo_picking_ids)
 
 	return todo_picking_ids
 
 
+    def write_printed(self, cr, uid, picking_ids, context=None):
+        self.pool.get('stock.picking').write(cr, uid, picking_ids, \
+                {'printed': True, 'printed_date': datetime.utcnow()}
+        )
+	return True
+
+		
 class StockPickingWavePreset(osv.osv):
     _name = 'stock.picking.wave.preset'
     _columns = {
         'name': fields.char('Preset Name'),
 	'number_waves': fields.integer('Number of Waves to Generate'),
+	'not_containerized': fields.boolean('Not Containerized'),
         'max_picks': fields.integer('Maximum number of picks/containers'),
         'max_units': fields.integer('Maximum number of units'),
-	'specified_items': fields.many2many('product.product', 'stock_picking_wave_items_rel', 'wizard_id', 'product_id', 'Specified Items'),
+	'specified_items': fields.many2many('product.product', 'stock_picking_wave_preset_items_rel', 'preset_id', 'product_id', 'Specified Items'),
         'from_date': fields.datetime('From Order Date'),
         'to_date': fields.datetime('To Order Date'),
 	'specify_items': fields.boolean('Specify Items'),

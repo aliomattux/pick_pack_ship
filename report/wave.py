@@ -12,7 +12,6 @@ BLANK =  {
           'sku': ' ',
           'description': ' ',
           'description2': ' ',
-          'special_order': ' ',
 }
 
 class PickWaveReport(report_sxw.rml_parse):
@@ -52,37 +51,54 @@ class PickWaveReport(report_sxw.rml_parse):
 	    return 0
 
 
-    def prepare_line_val(self, container, product, move):
-	special_order = ' '
-	expected_ship_date = ' '
-	cr = self.cr
-	uid = self.uid
+    def line_val_dict(self, containerized, container, product, move):
+#	if move.picking_id.state == 'done':
+	if containerized:
+	    qty = int(move.product_qty)
+	else:
+	    qty = 1
+#	else:
+	    #This can be toggled for use with displaying actual posted data vs future data
+#	    qty = int(move.product_qty)
 
         return {
-		'qty_order': int(move.procurement_id.product_qty),
-		'qty_ship': int(move.product_qty) if move.picking_id.state == 'done' else 0,
-		'sku': product.default_code or '',
-		'container': container.container,
-		'location': move.location_id.name or ' ',
-		'description': product.name or '',
-		'description2': product.name or '',
-		'special_order': special_order,
-		'expected_ship_date': expected_ship_date,
+                'qty_order': int(move.procurement_id.product_qty),
+                'qty_ship': qty,
+                'sku': product.default_code or '',
+                'container': container.container,
+                'location': move.location_id.name or ' ',
+                'description': product.name or '',
+                'description2': product.name or '',
 	}
 
 
-    def _get_components_list(self, container, line):
+    def prepare_line_val(self, wave, container, product, move):
+	cr = self.cr
+	uid = self.uid
+
+	items = []
+
+	if wave.not_containerized:
+	    for x in range(int(move.product_qty)):
+		items.append(self.line_val_dict(False, container, product, move))
+	else:
+	    items.append(self.line_val_dict(True, container, product, move))
+
+	return items
+
+
+    def _get_components_list(self, wave, container, line):
 	result = []
 	for component in line.item.components:
-	    result.append(self.prepare_line_val(container, component.item, component.qty * line.qty))
+	    result.extend(self.prepare_line_val(wave, container, component.item, component.qty * line.qty))
 
 	return result
 
 
-    def _process_lines(self, cr, uid, container, lines):
+    def _process_lines(self, cr, uid, wave, container, lines):
 	result = []
         for line in lines:
-	    result.append(self.prepare_line_val(container, line.product_id, line))
+	    result.extend(self.prepare_line_val(wave, container, line.product_id, line))
 
 #	result.extend(self.show_backorder_lines(cr, uid, line))
 	return result
@@ -95,8 +111,9 @@ class PickWaveReport(report_sxw.rml_parse):
 	uid = self.uid
 	for container in picks:
 	    pick = container.pick
+	    wave = container.wave
 	    pick_lines = lines = [move for move in pick.move_lines]
-	    lines = self._process_lines(cr, uid, container, pick_lines)
+	    lines = self._process_lines(cr, uid, wave, container, pick_lines)
 	    processed_lines.extend(lines)
 	    
         items_per_page = 15
@@ -118,6 +135,7 @@ class PickWaveReport(report_sxw.rml_parse):
 
 
     def _mark_printed(self, pickings):
+	print 'call'
         cr = self.cr
         uid = self.uid
 

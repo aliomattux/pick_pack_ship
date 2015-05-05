@@ -9,8 +9,9 @@
 		    <group sring="Configure Options" >
 			<group>
 			    <field name="picking_type_id" invisible="1" />
-			    <field name="preset" />
+			    <field name="preset" on_change="onchange_preset(preset)" />
 			    <field name="number_waves" required="1" />
+			    <field name="not_containerized" />
 			    <field name="name" invisible="1" />
 			</group>
 			<newline/>
@@ -65,6 +66,8 @@
                 <form string="">
 		    <group>
                         <field name="name" required="1" />
+                        <field name="number_waves" required="1" />
+                        <field name="not_containerized" />
 		    </group>
                     <group sring="Configure Options" >
                         <group>

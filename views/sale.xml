@@ -1,0 +1,14 @@
+<openerp>
+    <data>
+        <record id="view_mage_order_pick_ahead_form" model="ir.ui.view">
+            <field name="name">Mage Sale Order Pick Ahead Form</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="mage2odoo.view_mage_order_form" />
+            <field name="arch" type="xml">
+		<field name="mage_shipment_complete" position="after">
+		    <field name="pick_ahead"/>
+		</field>
+	    </field>
+	</record>
+    </data>
+</openerp>

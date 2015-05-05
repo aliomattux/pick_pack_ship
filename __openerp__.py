@@ -12,6 +12,7 @@
 	'data/wave_sequence.xml',
 	'views/wave.xml',
 	'views/stock.xml',
+	'views/sale.xml',
 	'report.xml',
     ],
     'test': [

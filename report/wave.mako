@@ -117,7 +117,7 @@
             %for line in myset:
                 <div class="divtr">
 		    <div class="divtd detailline">${line['location']}</div>
-                    <div class="divtd detailline qty highlightme">${line['qty_order']}</div>
+                    <div class="divtd detailline qty highlightme">${line['qty_ship']}</div>
 		    <div class="divtd detailline"><strong>${line['sku']}</strong></div>
 		    <div class="divtd detailline">${line['description']}</div>
 		    <div class="divtd detailline">${line['description2']}</div>
@@ -148,7 +148,6 @@
     <div style="page-break-after: always;"></div>
 
   %endfor
-  <% set printed = mark_printed(objects) %>
 </body>
 </html>
 

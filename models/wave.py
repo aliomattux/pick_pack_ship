@@ -18,6 +18,7 @@ class StockPickingWave(osv.osv):
 	, 'Status', required=True),
 	'date': fields.datetime('Created On'),
 	'last_print_date': fields.datetime('Last Printed Date'),
+	'not_containerized': fields.boolean('Not Containerized'),
 #	'picks_count': fields.function(_picks_count, method=True, type="integer", store=True, string="# Picks"),
 	'picks': fields.one2many('stock.picking.wave.container', 'wave', 'Orders', readonly=True),
     }
@@ -71,15 +72,16 @@ class StockPickingWave(osv.osv):
        }
 
 
-    def create_waves(self, cr, uid, picking_type_id, waves, context=None):
-	print 'waves', waves
+    def create_waves(self, cr, uid, picking_type_id, waves, wizard_vals, context=None):
 	for k, v in waves.items():
-	    wave = self.create_wave(cr, uid, picking_type_id, v)
+	    if not v:
+		continue
+	    wave = self.create_wave(cr, uid, wizard_vals, picking_type_id, v)
 
 	return True
 
 
-    def create_wave(self, cr, uid, picking_type_id, picking_ids, context=None):
+    def create_wave(self, cr, uid, wizard_vals, picking_type_id, picking_ids, context=None):
 	container = 1
 	wave_lines = []
 	for picking_id in picking_ids:
@@ -93,6 +95,7 @@ class StockPickingWave(osv.osv):
 		'picks': wave_lines
 	}
 
+	vals.update(wizard_vals)
 	wave_id = self.create(cr, uid, vals)
 	return True
 

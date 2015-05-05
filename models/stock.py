@@ -51,3 +51,15 @@ class StockPicking(osv.osv):
 	'pick_ahead': fields.boolean('Pick Ahead'),
 	'waves': fields.one2many('stock.picking.wave.container', 'pick', string='Wave Container', readonly=True),
     }
+
+
+
+class StockMove(osv.osv):
+    _inherit = 'stock.move'
+
+    def add_sale_vals(self, cr, uid, sale, context=None):
+	vals = super(StockMove, self).add_sale_vals(cr, uid, sale, context=context)
+        vals['pick_ahead'] = sale.pick_ahead,
+
+
+        return vals
