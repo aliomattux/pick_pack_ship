@@ -18,7 +18,7 @@ class StockPickingWave(osv.osv):
 	, 'Status', required=True),
 	'date': fields.datetime('Created On'),
 	'last_print_date': fields.datetime('Last Printed Date'),
-	'not_containerized': fields.boolean('Not Containerized'),
+	'not_containerized': fields.boolean('Not Containerized/Batch Pick'),
 #	'picks_count': fields.function(_picks_count, method=True, type="integer", store=True, string="# Picks"),
 	'picks': fields.one2many('stock.picking.wave.container', 'wave', 'Orders', readonly=True),
     }

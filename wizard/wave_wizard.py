@@ -7,7 +7,7 @@ class StockPickingWaveWizard(osv.osv_memory):
 	'preset': fields.many2one('stock.picking.wave.preset', 'Preset'),
 	'name': fields.char('Name'),
 	'number_waves': fields.integer('Number of Waves to Generate'),
-	'not_containerized': fields.boolean('Not Containerized'),
+	'not_containerized': fields.boolean('Not Containerized/Batch Pick'),
 	'specify_items': fields.boolean('Specify Items'),
 	'picking_type_id': fields.many2one('stock.picking.type', 'Warehouse'),
 	'max_picks': fields.integer('Maximum number of picks/containers'),

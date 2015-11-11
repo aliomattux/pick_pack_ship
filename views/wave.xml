@@ -33,6 +33,7 @@
                             <group>
 				<field name="date" />
 			        <field name="last_print_date" />
+				<field name="not_containerized" />
 			    </group>
 		        </group>
 		        <group colspan="4" string="Picks">

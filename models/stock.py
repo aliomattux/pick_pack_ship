@@ -59,7 +59,7 @@ class StockMove(osv.osv):
 
     def add_sale_vals(self, cr, uid, sale, context=None):
 	vals = super(StockMove, self).add_sale_vals(cr, uid, sale, context=context)
-        vals['pick_ahead'] = sale.pick_ahead,
+        vals['pick_ahead'] = sale.pick_ahead
 
 
         return vals

@@ -51,12 +51,9 @@ class PickWaveReport(report_sxw.rml_parse):
 	    return 0
 
 
-    def line_val_dict(self, containerized, container, product, move):
+    def line_val_dict(self, container, product, move):
 #	if move.picking_id.state == 'done':
-	if containerized:
-	    qty = int(move.product_qty)
-	else:
-	    qty = 1
+	qty = int(move.product_qty)
 #	else:
 	    #This can be toggled for use with displaying actual posted data vs future data
 #	    qty = int(move.product_qty)
@@ -65,7 +62,7 @@ class PickWaveReport(report_sxw.rml_parse):
                 'qty_order': int(move.procurement_id.product_qty),
                 'qty_ship': qty,
                 'sku': product.default_code or '',
-                'container': container.container,
+                'container': container.container if container else ' ',
                 'location': move.location_id.name or ' ',
                 'description': product.name or '',
                 'description2': product.name or '',
@@ -78,11 +75,7 @@ class PickWaveReport(report_sxw.rml_parse):
 
 	items = []
 
-	if wave.not_containerized:
-	    for x in range(int(move.product_qty)):
-		items.append(self.line_val_dict(False, container, product, move))
-	else:
-	    items.append(self.line_val_dict(True, container, product, move))
+	items.append(self.line_val_dict(container, product, move))
 
 	return items
 
@@ -105,16 +98,38 @@ class PickWaveReport(report_sxw.rml_parse):
 #	return sorted(result, key=lambda id: id['prime_location'])
 
 
-    def _paginate_items(self, picks):
-	processed_lines = []
+    def batch_picking_lines(self, cr, uid, picks, wave):
+	master_dict = {}
+        for container in picks:
+	    picking = container.pick
+	    for move in picking.move_lines:
+		product = move.product_id
+		if master_dict.get(product.id):
+		    master_dict[product.id]['qty_ship'] += move.product_qty
+		else:
+		    master_dict[product.id] = self.line_val_dict(False, product, move)
+
+	lines = []
+	for k, v in master_dict.items():
+	    lines.append(v)
+
+	return lines
+
+
+    def _paginate_items(self, picks, wave):
 	cr = self.cr
 	uid = self.uid
-	for container in picks:
-	    pick = container.pick
-	    wave = container.wave
-	    pick_lines = lines = [move for move in pick.move_lines]
-	    lines = self._process_lines(cr, uid, wave, container, pick_lines)
-	    processed_lines.extend(lines)
+	if wave.not_containerized:
+	    processed_lines = self.batch_picking_lines(cr, uid, picks, wave)
+
+	else:
+	    processed_lines = []
+
+	    for container in picks:
+	        pick = container.pick
+	        pick_lines = [move for move in pick.move_lines]
+	        lines = self._process_lines(cr, uid, wave, container, pick_lines)
+	        processed_lines.extend(lines)
 	    
         items_per_page = 15
         result = []
@@ -135,7 +150,6 @@ class PickWaveReport(report_sxw.rml_parse):
 
 
     def _mark_printed(self, pickings):
-	print 'call'
         cr = self.cr
         uid = self.uid
 

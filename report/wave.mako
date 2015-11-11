@@ -59,7 +59,7 @@
     </div>
      <% endblock %>
     ${heada}
-<% set myorderlines = paginate_items(wave.picks) %>
+<% set myorderlines = paginate_items(wave.picks, wave) %>
 <% set count = 0 %>
     %for myset in myorderlines:
 	<% set count = count + 1 %>
